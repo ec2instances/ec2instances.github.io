@@ -8,6 +8,8 @@
 
 		<div id="example-table"></div>
 		
+		<br>
+		
 		<iframe src="https://ghbtns.com/github-btn.html?user=ec2instances&repo=ec2instances.github.io&type=watch&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
 		
  		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
@@ -32,12 +34,9 @@
 				instances = regions[Object.keys(regions)[0]];
 				instancesArray = instancesArray.concat(Object.values(instances)); //merge two arrays together
 
-				//now add "monthly price" and drop some unneeded properties
+				//now add "monthly price" (hourly * 730 hours per month)
 				instancesArray.forEach(i => {
 					i.priceMonthly = i.price * 730;
-					delete i["rateCode"];
-					delete i["License Model"];
-					delete i["Location"];
 				});
 
 
@@ -45,7 +44,16 @@
 				 	height:900, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
 				 	data: instancesArray, //assign data to table
 				 	layout:"fitColumns", //fit columns to width of table (optional)
-					autoColumns: true
+					columns: [
+						{title: "Instance Type", field:"Instance Type"},
+						{title: "Price", field:"price", sorter:"number"},
+						{title: "Monthly price", field:"priceMonthly", sorter:"number"},
+						{title: "vCPU", field: "vCPU", sorter:"number"},
+						{title: "Memory", field: "Memory", sorter:"number"},
+						{title: "Operating System", field: "Operating System"},
+						{title: "Storage", field: "Storage", sorter:"number"},
+						{title: "Network Performance", field: "Network Performance"},
+					]
 				});
 			})();
 

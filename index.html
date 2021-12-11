@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-<html style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;">
+<html>
 	<head>
 		<title>EC2 instance types pricing table comparison</title>
-		<link href="https://unpkg.com/tabulator-tables@5.0.7/dist/css/tabulator.min.css" rel="stylesheet">
+		<link href="https://unpkg.com/tabulator-tables@5.0.7/dist/css/tabulator_midnight.min.css" rel="stylesheet">
+		<style>
+			html {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+				color:#ddd;
+				background: #222;
+			}
+			a,a:visited{color:#9af}
+		</style>
 	</head>
 	<body>
 
 		<h1>AWS EC2 Instance pricing comparison</h1>
 
-		<p>The data is pulled directly from AWS docs, from the same JSON endpoint as their <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="nofollow">pricing page</a> pulls it from, so the data is always up to date. The pricing is for "on-demand" instances only for now.</p>
+		<p>The data is pulled directly from AWS docs, the same JSON endpoint their <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="nofollow">pricing page</a> pulls it from, so the data is always up to date. The pricing is for "on-demand" instances US-East only for now.</p>
 
-		<p>The reason I built this is because <code style='background:#f5f5f5;border:1px solid #ddd;padding:3px;border-radius:5px;'>https://ec2instances.info/</code> - the website I used before - has been acquired, became out of date and misses some pricing (many instance types simply say "unavailable"). So I put together this little app (40 lines of vanilla JS) to pull data from AWS docs directly and display it as a sortable table.</p>
+		<p>The reason I built this is because <u><code>https://ec2instances.info/</code></u> - the website I used before - has been acquired, became out of date and misses some pricing (many instance types simply say "unavailable"). So I put together this little app (40 lines of vanilla JS) to pull data from AWS docs directly and display it in a sortable table.</p>
 
 		<p><iframe src="https://ghbtns.com/github-btn.html?user=ec2instances&repo=ec2instances.github.io&type=watch&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe></p>
 
@@ -23,6 +31,7 @@
 				var linUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(Ohio)/Linux/index.json?timestamp=1639230933739";
 				var winUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(Ohio)/Windows/index.json?timestamp=1639230933739"
 
+				//pull linux
 				var url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(linUrl);
 				var response = await fetch(url);
 				var data = await response.json();
@@ -50,8 +59,8 @@
 				 	layout:"fitColumns", //fit columns to width of table (optional)
 					columns: [
 						{title: "Instance Type", field:"Instance Type"},
-						{title: "Price", field:"price", sorter:"number"},
-						{title: "Monthly price", field:"priceMonthly", sorter:"number"},
+						{title: "Price", field:"price", sorter:"number", formatter:"money", formatterParams:{precision:4}},
+						{title: "Monthly price", field:"priceMonthly", sorter:"number", formatter:"money", formatterParams:{thousand:" ",precision:2}},
 						{title: "vCPU", field: "vCPU", sorter:"number"},
 						{title: "Memory", field: "Memory", sorter:"number"},
 						{title: "Operating System", field: "Operating System"},

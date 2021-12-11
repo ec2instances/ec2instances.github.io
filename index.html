@@ -16,7 +16,7 @@
 
 		<h1>AWS EC2 Instance pricing comparison</h1>
 
-		<p>The data is pulled directly from AWS docs, the same JSON endpoint their <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="nofollow">pricing page</a> pulls it from, so the data is always up to date. The pricing is for "on-demand" instances US-East only for now.</p>
+		<p>The data is pulled directly from AWS docs, the same JSON endpoint their <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="nofollow">pricing page</a> pulls it from, so the data is always up to date. The pricing is for "on-demand" and "reserved 1yr convertible" instances, US-East only for now.</p>
 
 		<p>The reason I built this is because <u><code>https://ec2instances.info/</code></u> - the website I used before - has been acquired, became out of date and misses some pricing (many instance types simply say "unavailable"). So I put together this little app (40 lines of vanilla JS) to pull data from AWS docs directly and display it in a sortable table.</p>
 
@@ -49,8 +49,10 @@
 				instancesArray = instancesArray.concat(Object.values(instances)); //merge two arrays together
 
 				//now add "monthly price" (hourly * 730 hours per month)
+				//and "reserved" price ()
 				instancesArray.forEach(i => {
 					i.priceMonthly = i.price * 730;
+					i.reservedPriceMonthly = i.priceMonthly * 0.69;
 				});
 
 
@@ -62,6 +64,7 @@
 						{title: "Instance Type", field:"Instance Type"},
 						{title: "Price", field:"price", sorter:"number", formatter:"money", formatterParams:{precision:4}},
 						{title: "Monthly price", field:"priceMonthly", sorter:"number", formatter:"money", formatterParams:{thousand:" ",precision:2}},
+						{title: "Reserved 1yr monthly", field:"reservedPriceMonthly", sorter:"number", formatter:"money", formatterParams:{thousand:" ",precision:2}},
 						{title: "vCPU", field: "vCPU", sorter:"number"},
 						{title: "Memory", field: "Memory", sorter:"number"},
 						{title: "Operating System", field: "Operating System"},

@@ -8,7 +8,7 @@
 
 ## Why build this?
 
-Remember `https://ec2instances.info/` (now available at `https://instances.vantage.sh/`) ? Used to be a gret website, but it hasn't been updated for a long time and some pricing info is simply missing (chekc the "t3a" price, it just says "unavailable")
+Remember `https://ec2instances.info/` (now available at `https://instances.vantage.sh/`) ? Used to be a great website, but it hasn't been updated for a long time and some pricing info is simply missing (check the "t3a" price for example, it just says "unavailable")
 
 I got sick and tired of waiting for bugs to be fixed and created this.
 

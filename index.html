@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>EC2 pricing table comparison</title>
+		<link href="https://unpkg.com/tabulator-tables@5.0.7/dist/css/tabulator.min.css" rel="stylesheet">
+	</head>
+	<body>
+
+		<div id="example-table"></div>
+		
+ 		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+		<script>
+			(async function() {
+	  
+				var linUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(Ohio)/Linux/index.json?timestamp=1639230933739";
+				var winUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(Ohio)/Windows/index.json?timestamp=1639230933739"
+
+				var url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(linUrl);
+				var response = await fetch(url);
+				var data = await response.json();
+				var regions = JSON.parse(data.contents).regions;
+				var instances = regions[Object.keys(regions)[0]];
+				var instancesArray = Object.values(instances);
+
+				//now for Windows
+				var url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(winUrl);
+				response = await fetch(url);
+				data = await response.json();
+				regions = JSON.parse(data.contents).regions;
+				instances = regions[Object.keys(regions)[0]];
+				instancesArray = instancesArray.concat(Object.values(instances)); //merge two arrays together
+
+				//now add "monthly price" and drop some unneeded properties
+				instancesArray.forEach(i => {
+					i.priceMonthly = i.price * 730;
+					delete i["rateCode"];
+					delete i["License Model"];
+					delete i["Location"];
+				});
+
+
+				var table = new Tabulator("#example-table", {
+				 	height:900, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+				 	data: instancesArray, //assign data to table
+				 	layout:"fitColumns", //fit columns to width of table (optional)
+					autoColumns: true
+				});
+			})();
+
+		</script>
+	</body>
+</html>

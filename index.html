@@ -3,13 +3,17 @@
 	<head>
 		<title>EC2 instance types pricing table comparison</title>
 		<link href="https://unpkg.com/tabulator-tables@5.0.7/dist/css/tabulator_midnight.min.css" rel="stylesheet">
+		<link href="https://unpkg.com/open-props" rel="stylesheet">
 		<style>
 			html {
-				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-				color:#ddd;
-				background: #222;
+				--scrollbar-color: var(--gray-7);
+				scrollbar-color: var(--scrollbar-color) transparent;
+				font-family: var(--font-sans);
+				color:var(--gray-3);
+				background: var(--gray-9);
 			}
-			a,a:visited{color:#9af}
+			code{font-family:var(--font-mono)}
+			a,a:visited{color:var(--indigo-3)}
 		</style>
 	</head>
 	<body>

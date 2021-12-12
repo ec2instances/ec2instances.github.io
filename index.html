@@ -11,9 +11,12 @@
 				font-family: var(--font-sans);
 				color:var(--gray-3);
 				background: var(--gray-9);
+				font-size:var(--font-size-2)
 			}
 			code{font-family:var(--font-mono)}
 			a,a:visited{color:var(--indigo-3)}
+
+			input { background: var(--gray-8); border-radius: var(--radius-2);border:var(--border-size-1) solid var(--gray-6);font-size:var(--font-size-1);color:#fff;padding: 5px; outline:none}
 
 			.tabulator-row .tabulator-cell {padding:8px 4px;}
 			.tabulator-col{padding: 4px}
@@ -25,7 +28,12 @@
 
 		<p>The data is pulled directly from AWS docs, the same JSON endpoint their <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="nofollow">pricing page</a> pulls it from, so the data is always up to date. The pricing is for "on-demand" and "reserved 1yr convertible" instances, US-East only for now.</p>
 
-		<p>The reason I built this is because <u><code>https://ec2instances.info/</code></u> - the website I used before - has been acquired, became out of date and misses some pricing (many instance types simply say "unavailable"). So I put together this little app (40 lines of vanilla JS) to pull data from AWS docs directly and display it in a sortable table.</p>
+		<p>The reason I built this is because my "goto" tool - <u><code>https://ec2instances.info/</code></u> - has been acquired, became out of date, has some bugs and misses some pricing (many instance types simply say "unavailable"). So I put together this little app (40 lines of vanilla JS) to pull the data from AWS docs directly and display it in a sortable table.</p>
+
+		<p>
+			<input type="number" id="minMem" placeholder="min memory (GB)">
+			<input type="number" id="minCpu" placeholder="min vCPU">
+		</p>
 
 		<div id="example-table"></div>
 
@@ -60,10 +68,11 @@
 				instancesArray.forEach(i => {
 					i.priceMonthly = i.price * 730;
 					i.reservedPriceMonthly = i.priceMonthly * 0.69;
+					i.memoryAsNumber = Number.parseFloat(i.Memory);
 				});
 
 
-				var table = new Tabulator("#example-table", {
+				window._table = new Tabulator("#example-table", {
 				 	height:900, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
 				 	data: instancesArray, //assign data to table
 				 	layout:"fitColumns", //fit columns to width of table (optional)
@@ -79,7 +88,24 @@
 						{title: "Network Performance", field: "Network Performance"},
 					]
 				});
+
+				document.getElementById("minMem").addEventListener("input", updateFilter);
+				document.getElementById("minCpu").addEventListener("input", updateFilter);
+
 			})();
+
+			function updateFilter() {
+				var minMem = document.getElementById("minMem").value || 0;
+				var minCpu = document.getElementById("minCpu").value || 0;
+
+				var filter = [];
+				if(minCpu)
+					filter.push({field: "vCPU", type: ">=", value: Number(minCpu) });
+				if(minMem)
+					filter.push({field: "memoryAsNumber", type: ">=", value: Number(minMem) });
+
+				window._table.setFilter(filter);
+			}
 
 		</script>
 	</body>

@@ -38,6 +38,7 @@
 				<option value="Linux">Linux</option>
 				<option value="Windows">Windows</option>
 			</select>
+			<input type="text" id="search" placeholder="search" style="float:right;">
 		</p>
 
 		<div id="example-table"></div>
@@ -97,6 +98,7 @@
 				document.getElementById("minMem").addEventListener("input", updateFilter);
 				document.getElementById("minCpu").addEventListener("input", updateFilter);
 				document.getElementById("selectOs").addEventListener("change", updateFilter);
+				document.getElementById("search").addEventListener("input", updateFilter);
 
 			})();
 
@@ -104,6 +106,7 @@
 				var minMem = document.getElementById("minMem").value || 0;
 				var minCpu = document.getElementById("minCpu").value || 0;
 				var os = document.getElementById("selectOs").value;
+				var search = document.getElementById("search").value;
 
 				var filter = [];
 				if (minCpu)
@@ -112,6 +115,8 @@
 					filter.push({field: "memoryAsNumber", type: ">=", value: Number(minMem) });
 				if (os)
 					filter.push({field: "Operating System", type: "=", value: os });
+				if (search)
+					filter.push({field: "Instance Type", type: "like", value: search });
 
 				window._table.setFilter(filter);
 			}

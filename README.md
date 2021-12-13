@@ -2,9 +2,12 @@
 
 **Use here 👉 [ec2instances.github.io](https://ec2instances.github.io)**
 
-1. It pulls up to date EC2 pricing data from AWS (the same source their pricing page pulls it).
-2. It uses [Tabulator](http://tabulator.info/) to convert the JSON data to a sortable table.
-3. Kudos to https://allorigins.win/ for providing a CORS proxy.
+Built with:
+
+1. EC2 pricing data from AWS (the same source their pricing page pulls it from).
+2. [Tabulator](http://tabulator.info/) to convert the JSON data to a sortable table.
+3. [AllOrigins](https://allorigins.win/) - a CORS proxy
+4. [Open Props](https://open-props.style/) - minimalistic CSS framework (think Tailwind CSS, but based on CSS variables)
 
 ## Why build this?
 

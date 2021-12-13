@@ -16,7 +16,7 @@
 			code{font-family:var(--font-mono)}
 			a,a:visited{color:var(--indigo-3)}
 
-			input { background: var(--gray-8); border-radius: var(--radius-2);border:var(--border-size-1) solid var(--gray-6);color:#fff;padding: 5px; outline:none}
+			input, select { background: var(--gray-8); border-radius: var(--radius-2);border:var(--border-size-1) solid var(--gray-6);color:#fff;padding: 5px; outline:none;font-family: var(--font-sans);}
 
 			.tabulator-row .tabulator-cell {padding:8px 4px;}
 			.tabulator-col{padding: 4px}
@@ -33,6 +33,11 @@
 		<p>
 			<input type="number" id="minMem" placeholder="min memory (GB)">
 			<input type="number" id="minCpu" placeholder="min vCPU">
+			<select id="selectOs">
+				<option value="">Any OS</option>
+				<option value="Linux">Linux</option>
+				<option value="Windows">Windows</option>
+			</select>
 		</p>
 
 		<div id="example-table"></div>
@@ -91,18 +96,22 @@
 
 				document.getElementById("minMem").addEventListener("input", updateFilter);
 				document.getElementById("minCpu").addEventListener("input", updateFilter);
+				document.getElementById("selectOs").addEventListener("change", updateFilter);
 
 			})();
 
 			function updateFilter() {
 				var minMem = document.getElementById("minMem").value || 0;
 				var minCpu = document.getElementById("minCpu").value || 0;
+				var os = document.getElementById("selectOs").value;
 
 				var filter = [];
-				if(minCpu)
+				if (minCpu)
 					filter.push({field: "vCPU", type: ">=", value: Number(minCpu) });
-				if(minMem)
+				if (minMem)
 					filter.push({field: "memoryAsNumber", type: ">=", value: Number(minMem) });
+				if (os)
+					filter.push({field: "Operating System", type: "=", value: os });
 
 				window._table.setFilter(filter);
 			}

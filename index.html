@@ -33,6 +33,7 @@
 		<p>
 			<input type="number" id="minMem" placeholder="min memory (GB)">
 			<input type="number" id="minCpu" placeholder="min vCPU">
+			<input type="number" id="maxPrice" placeholder="max price/mo">
 			<select id="selectOs">
 				<option value="">Any OS</option>
 				<option value="Linux">Linux</option>
@@ -99,6 +100,7 @@
 				document.getElementById("minCpu").addEventListener("input", updateFilter);
 				document.getElementById("selectOs").addEventListener("change", updateFilter);
 				document.getElementById("search").addEventListener("input", updateFilter);
+				document.getElementById("maxPrice").addEventListener("input", updateFilter);
 
 			})();
 
@@ -107,6 +109,7 @@
 				var minCpu = document.getElementById("minCpu").value || 0;
 				var os = document.getElementById("selectOs").value;
 				var search = document.getElementById("search").value;
+				var maxPrice = document.getElementById("maxPrice").value || 0;
 
 				var filter = [];
 				if (minCpu)
@@ -117,6 +120,8 @@
 					filter.push({field: "Operating System", type: "=", value: os });
 				if (search)
 					filter.push({field: "Instance Type", type: "like", value: search });
+				if (maxPrice)
+					filter.push({field: "priceMonthly", type: "<=", value: Number.parseFloat(maxPrice) });
 
 				window._table.setFilter(filter);
 			}

@@ -126,19 +126,20 @@
 				var response = await fetch(url);
 				var data = await response.json();
 				var regions = JSON.parse(data.contents).regionAttributes.Location;
+				regions.sort(); //sort regions alphabetically
 				
 				var select = document.getElementById("selectRegion");
-				for (var i = 0; i < regions.length; i++) {
-					var opt = regions[i];
+				regions.forEach(r => {
 					var el = document.createElement("option");
-					el.textContent = opt;
-					el.value = opt;
+					el.textContent = r;
+					el.value = r;
 					select.appendChild(el);
-				}
+				});
+				select.value = "US East (Ohio)"; //preselect the default region
 			}
 
 			function updateFilter(event) {
-				if (event.target.id == "selectRegion") {
+				if (event.target.id == "selectRegion") { //region has changed - reload the table
 					loadRegionData(event.target.value);
 					return;
 				}

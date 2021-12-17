@@ -39,6 +39,7 @@
 				<option value="Linux">Linux</option>
 				<option value="Windows">Windows</option>
 			</select>
+			<select id="selectRegion"></select>
 			<input type="text" id="search" placeholder="find instance name" style="float:right;">
 		</p>
 
@@ -57,10 +58,19 @@
 	
  		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		<script>
-			(async function() {
-	  
-				const linUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(Ohio)/Linux/index.json?timestamp=1639230933739";
-				const winUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/US%20East%20(Ohio)/Windows/index.json?timestamp=1639230933739"
+			//fill regions dropdown
+			loadRegionsList();
+
+			//load US East data on startup
+			loadRegionData("US East (Ohio)");
+			
+			//bind "input" event for all filters
+			document.querySelectorAll("#filterBox *").forEach(inputEl => inputEl.addEventListener("input", updateFilter));
+
+			async function loadRegionData(regionName) {
+ 
+				const linUrl = `https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/${encodeURIComponent(regionName)}/Linux/index.json?timestamp=1639230933739`;
+				const winUrl = `https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/${encodeURIComponent(regionName)}/Windows/index.json?timestamp=1639230933739`
 
 				//pull linux data
 				var url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(linUrl);
@@ -86,29 +96,53 @@
 				});
 
 				//init tabulator engine
-				window._table = new Tabulator("#example-table", {
-				 	height:700, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-				 	data: instancesArray, //assign data to table
-				 	layout:"fitColumns", //fit columns to width of table (optional)
-					selectable: true, //make rows clickable
-					columns: [
-						{title: "Instance Type", field:"Instance Type"},
-						{title: "Price", field:"price", sorter:"number", formatter:"money", formatterParams:{precision:4}},
-						{title: "Monthly price", field:"priceMonthly", sorter:"number", formatter:"money", formatterParams:{thousand:" ",precision:2}},
-						{title: "Reserved 1yr monthly", field:"reservedPriceMonthly", sorter:"number", formatter:"money", formatterParams:{thousand:" ",precision:2}},
-						{title: "vCPU", field: "vCPU", sorter:"number"},
-						{title: "Memory", field: "Memory", sorter:"number"},
-						{title: "Operating System", field: "Operating System"},
-						{title: "Storage", field: "Storage", sorter:"number"},
-						{title: "Network Performance", field: "Network Performance"},
-					]
-				});
+				if(!window._table)
+					window._table = new Tabulator("#example-table", {
+					 	height:700, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+						data: instancesArray, //assign data to table
+					 	layout:"fitColumns", //fit columns to width of table (optional)
+						selectable: true, //make rows clickable
+						columns: [
+							{title: "Instance Type", field:"Instance Type"},
+							{title: "Price", field:"price", sorter:"number", formatter:"money", formatterParams:{precision:4}},
+							{title: "Monthly price", field:"priceMonthly", sorter:"number", formatter:"money", formatterParams:{thousand:" ",precision:2}},
+							{title: "Reserved 1yr monthly", field:"reservedPriceMonthly", sorter:"number", formatter:"money", formatterParams:{thousand:" ",precision:2}},
+							{title: "vCPU", field: "vCPU", sorter:"number"},
+							{title: "Memory", field: "Memory", sorter:"number"},
+							{title: "Operating System", field: "Operating System"},
+							{title: "Storage", field: "Storage", sorter:"number"},
+							{title: "Network Performance", field: "Network Performance"},
+						]
+					});
+				else {
+					window._table.replaceData(instancesArray); //refresh data
+				}
+			}
 
-				//bind "input" event for all filters
-				document.querySelectorAll("#filterBox *").forEach(inputEl => inputEl.addEventListener("input", updateFilter));
-			})();
+			async function loadRegionsList() {
+				const regionUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/metadata.json?timestamp=1639729931316";
 
-			function updateFilter() {
+				var url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(regionUrl);
+				var response = await fetch(url);
+				var data = await response.json();
+				var regions = JSON.parse(data.contents).regionAttributes.Location;
+				
+				var select = document.getElementById("selectRegion");
+				for (var i = 0; i < regions.length; i++) {
+					var opt = regions[i];
+					var el = document.createElement("option");
+					el.textContent = opt;
+					el.value = opt;
+					select.appendChild(el);
+				}
+			}
+
+			function updateFilter(event) {
+				if (event.target.id == "selectRegion") {
+					loadRegionData(event.target.value);
+					return;
+				}
+
 				var minMem = document.getElementById("minMem").value || 0;
 				var minCpu = document.getElementById("minCpu").value || 0;
 				var os = document.getElementById("selectOs").value;

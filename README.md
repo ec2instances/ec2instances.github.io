@@ -16,3 +16,7 @@ Remember `https://ec2instances.info/` (now available at `https://instances.vanta
 I got tired of waiting for bugs to be fixed and created this.
 
 ### Contributions welcome
+
+---
+
+&copy; Alex Yumashev https://ec2instances.github.io

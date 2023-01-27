@@ -58,6 +58,8 @@
 	
  		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 		<script>
+			const corsProxy = 'https://corsproxy.io/?';
+			
 			//fill regions dropdown
 			loadRegionsList();
 
@@ -68,12 +70,12 @@
 			document.querySelectorAll("#filterBox *").forEach(inputEl => inputEl.addEventListener("input", updateFilter));
 
 			async function loadRegionData(regionName) {
- 
+				
 				const linUrl = `https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/${encodeURIComponent(regionName)}/Linux/index.json?timestamp=1639230933739`;
 				const winUrl = `https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/${encodeURIComponent(regionName)}/Windows/index.json?timestamp=1639230933739`
 
 				//pull linux data
-				var url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(linUrl);
+				var url = corsProxy + encodeURIComponent(linUrl);
 				var response = await fetch(url);
 				var data = await response.json();
 				var regions = JSON.parse(data.contents).regions;
@@ -81,7 +83,7 @@
 				var instancesArray = Object.values(instances);
 
 				//now pull Windows data
-				url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(winUrl);
+				url = corsProxy + encodeURIComponent(winUrl);
 				response = await fetch(url);
 				data = await response.json();
 				regions = JSON.parse(data.contents).regions;
@@ -122,7 +124,7 @@
 			async function loadRegionsList() {
 				const regionUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/metadata.json?timestamp=1639729931316";
 
-				var url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(regionUrl);
+				var url = corsProxy + encodeURIComponent(regionUrl);
 				var response = await fetch(url);
 				var data = await response.json();
 				var regions = JSON.parse(data.contents).regionAttributes.Location;

@@ -6,7 +6,7 @@ Built with:
 
 1. EC2 pricing data from AWS (the same source their pricing page pulls it from).
 2. [Tabulator](http://tabulator.info/) to convert the JSON data to a sortable table.
-3. [AllOrigins](https://allorigins.win/) - a CORS proxy
+3. [corsproxy.io](https://corsproxy.io/) - a CORS proxy
 4. [Open Props](https://open-props.style/) - minimalistic CSS framework (think Tailwind CSS, but based on CSS variables)
 
 ## Why build this?

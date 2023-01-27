@@ -78,7 +78,7 @@
 				var url = corsProxy + encodeURIComponent(linUrl);
 				var response = await fetch(url);
 				var data = await response.json();
-				var regions = JSON.parse(data).regions;
+				var regions = data.regions;
 				var instances = regions[Object.keys(regions)[0]];
 				var instancesArray = Object.values(instances);
 
@@ -86,7 +86,7 @@
 				url = corsProxy + encodeURIComponent(winUrl);
 				response = await fetch(url);
 				data = await response.json();
-				regions = JSON.parse(data).regions;
+				regions = data.regions;
 				instances = regions[Object.keys(regions)[0]];
 				instancesArray = instancesArray.concat(Object.values(instances)); //merge two arrays together
 
@@ -127,7 +127,7 @@
 				var url = corsProxy + encodeURIComponent(regionUrl);
 				var response = await fetch(url);
 				var data = await response.json();
-				var regions = JSON.parse(data).regionAttributes.Location;
+				var regions = data.regionAttributes.Location;
 				regions.sort(); //sort regions alphabetically
 				
 				var select = document.getElementById("selectRegion");

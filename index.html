@@ -20,6 +20,24 @@
 
 			.tabulator-row .tabulator-cell {padding:8px 4px;}
 			.tabulator-col{padding: 4px}
+			.my-btn {
+				margin-left: 10px;
+				margin-bottom: 10px;
+				background: var(--gray-8);
+				border-radius: var(--radius-2);
+				border: var(--border-size-1) solid var(--gray-6);
+				color: #fff;
+				padding: 5px;
+				outline: none;
+				font-family: var(--font-sans);
+				box-sizing: border-box;
+				height: 31px;
+				vertical-align: top;
+			}
+			.my-btn:hover {
+				color: var(--gray-8);
+				background: #fff;
+			}
 		</style>
 	</head>
 	<body>
@@ -40,6 +58,7 @@
 				<option value="Windows">Windows</option>
 			</select>
 			<select id="selectRegion"></select>
+			<button id="download-csv" class="my-btn" style="float:right;">Download CSV</button>
 			<input type="text" id="search" placeholder="find instance name" style="float:right;">
 		</p>
 
@@ -122,6 +141,9 @@
 					window._table.replaceData(instancesArray); //refresh data
 				}
 			}
+			document.getElementById("download-csv").addEventListener("click", function(){
+			    window._table.download("csv", "data.csv");
+			});
 
 			async function loadRegionsList() {
 				const regionUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/metadata.json?timestamp=1639729931316";
@@ -168,6 +190,7 @@
 
 				window._table.setFilter(filter);
 			}
+
 
 		</script>
 	</body>

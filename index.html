@@ -45,7 +45,7 @@
 
 		<h1>AWS EC2 Instance pricing comparison</h1>
 
-		<p>The data is pulled directly from AWS docs, the same JSON endpoint their <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="nofollow">pricing page</a> pulls it from, so the data is always up to date. The pricing is for "on-demand" and "reserved 1yr convertible" instances.</p>
+		<p>The data is pulled directly from AWS docs, the same JSON endpoint their <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="nofollow">pricing page</a> pulls it from, so the data is always up to date. On-demand pricing comes straight from the feed; the "reserved 1yr convertible (no-upfront)" column is estimated from the on-demand price using a per-family discount, since AWS does not expose a compact reserved-pricing feed.</p>
 
 		<p>The reason I built this is because my favorite "goto" tool - <u><code>https://ec2instances.info/</code></u> - has been acquired, lacks updates, has some unfixed bugs and misses some pricing. So I put together this little app to pull the data from AWS docs directly and display it in a sortable table.</p>
 
@@ -115,7 +115,7 @@
 				//now run through the data and do some preprocessing
 				instancesArray.forEach(i => {
 					i.priceMonthly = i.price * 730; //add "monthly price" (hourly * 730 hours per month)
-					i.reservedPriceMonthly = i.priceMonthly * 0.73; //and "reserved" price (27% average save) TODO: pull actual reserved pricing
+					i.reservedPriceMonthly = i.priceMonthly * reservedMultiplier(i["Instance Type"]); //1yr Convertible No-Upfront, family-based estimate
 					i.memoryAsNumber = Number.parseFloat(i.Memory); //convert Memory to number for sorting/filtering
 				});
 
@@ -145,6 +145,20 @@
 			document.getElementById("download-csv").addEventListener("click", function(){
 			    window._table.download("csv", "data.csv");
 			});
+
+			//1yr Convertible No-Upfront vs On-Demand multiplier, per family (median, us-east-2 Linux, ~2026)
+			const reservedDiscounts = {
+				t: 0.72, a: 0.73, m: 0.73,
+				c: 0.72, z: 0.73,
+				r: 0.73, x: 0.74, u: 0.74,
+				d: 0.68, h: 0.78, i: 0.78, im: 0.77, is: 0.82, gr: 0.81,
+				g: 0.76, p: 0.79, f: 0.76, inf: 0.76, trn: 0.74, dl: 0.76, vt: 0.76,
+				hpc: 0.95, mac: 0.90
+			};
+			function reservedMultiplier(instanceType) {
+				const prefix = (instanceType.split(".")[0].match(/^[a-z]+/) || [""])[0];
+				return reservedDiscounts[prefix] ?? 0.73;
+			}
 
 			async function loadRegionsList() {
 				const regionUrl = "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/metadata.json?timestamp=1639729931316";
